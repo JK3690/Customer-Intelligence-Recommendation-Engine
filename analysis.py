@@ -1,5 +1,5 @@
 import pandas as pd
-
+import plotly.express as px  
 df = pd.read_csv("data/shopping_trends.csv")
 df.columns = df.columns.str.strip()
 
@@ -73,3 +73,34 @@ def assign_segment(row):
     else:
         return "Regular Customer"
 df["segment"] = df.apply(assign_segment, axis=1)
+
+def get_recommended_action(row):
+    if row["segment"] == "High Value Customer":
+        return "Offer premium membership or exclusive deals"
+    elif row["segment"] == "Frequent Low Value":
+        return "Encourage bundle purchases or upsell"
+    elif row["segment"] == "Loyal Customer":
+        return "Offer Retention campaigns"
+    elif row["segment"] == "Infrequent Premium":
+        return "Make Re-engagement deals"
+    elif row["segment"] == "Low Engagement":
+        return "Make Re-engagement deals"
+    else:
+        return "General Marketing"
+df["recommended_action"] = df.apply(get_recommended_action, axis=1)
+
+def explain(row):
+    return f"This customer is a {row['segment']} with {row['frequency_category']} purchase frequency and {row['value_category']} value."
+df["insight"] = df.apply(explain, axis=1)
+df_final = df[["Customer ID", "segment", "recommended_action", "insight"]]
+print(df_final.head(10))
+
+def show_customer_summary(customer_id):
+    result = df[df["Customer ID"] == customer_id]
+    print(result)
+
+action_counts = df["recommended_action"].value_counts().reset_index()
+action_counts.columns = ["action", "count"]
+#Pie chart
+fig = px.pie(action_counts, values="count",names="action")
+fig.show()
