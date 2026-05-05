@@ -1,0 +1,18 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Streamlit cache
+.streamlit/
+
+# Virtual envs
+venv/
+env/
+
+# OS / editor
+.DS_Store
+.vscode/
+
+# Outputs (optional)
+output/*.csv
