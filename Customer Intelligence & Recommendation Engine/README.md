@@ -2,12 +2,18 @@
 
 ## Overview
 
-A decision-focused system that analyzes customer purchase behavior, segments users, ranks them by value, and generates **actionable, explainable recommendations**.
-
-Unlike basic analytics projects, this system prioritizes **business decisions**.
+Transform customer data into prioritized segments, actionable recommendations, and explainable business insights.
 
 ---
+## Live Demo
 
+Try the app:
+
+https://customer-intelligence-recommendation-engine-jk.streamlit.app/
+
+Deployed using Streamlit Community Cloud.
+
+---
 ## Key Capabilities
 
 * Customer segmentation based on behavioral patterns
@@ -17,10 +23,65 @@ Unlike basic analytics projects, this system prioritizes **business decisions**.
 * Human-readable insights with reasoning
 * CLI support for querying individual customers
 * Exportable results for downstream use
+* Interactive dashboard (Streamlit)
+
+---
+## Screenshots / Output
+### Example Output
+
+Customer ID: 663
+
+Segment: High Value Customer
+
+Priority: Priority 1
+
+Insight: Customer has a score of 4.10, placing them in Priority 1, and is a High Value Customer with High Score value and High frequency. 
+
+Recommended action: VIP Treatment.
+
+---
+## Run Locally
+
+pip install -r requirements.txt
+
+streamlit run app.py
 
 ---
 
-## How It Works
+## CLI Usage
+
+Run the pipeline:
+
+```bash
+python main.py
+```
+
+Query a specific customer:
+
+```bash
+python main.py --customer_id 100
+```
+---
+
+## Project Structure
+
+```text
+Customer Intelligence & Recommendation Engine/
+├── .streamlit/
+│   └── config.toml
+├── data/
+│   └── shopping_trends.csv
+├── outputs/
+│   └── customer_insights.csv
+├── source
+│   └── main.py
+│   └── app.py
+├── README.md
+├── requirements.txt
+```
+
+---
+## System Design / How It Works
 
 The pipeline transforms raw transaction data into decisions:
 
@@ -51,75 +112,6 @@ Raw Data → Feature Engineering → Scoring → Priority → Segmentation → A
 
 ---
 
-## Example Output
-
-Customer ID: 663
-
-Segment: High Value Customer
-
-Priority: Priority 1
-
-Insight: Customer has a score of 4.10, placing them in Priority 1, and is a High Value Customer with High Score value and High frequency. 
-
-Recommended action: VIP Treatment.
-
----
-
-## CLI Usage
-
-Run the pipeline:
-
-```bash
-python source/main.py
-```
-
-Query a specific customer:
-
-```bash
-python source/main.py --customer_id 100
-```
-
-Output includes:
-
-* segment
-* priority
-* recommended action
-* explanation
-
----
-
-## Project Structure
-
-```text
-project/
-├── data/
-│   └── shopping_trends.csv
-├── outputs/
-│   └── customer_insights.csv
-├── source
-│   └── main.py
-├── README.md
-├── requirements.txt
-```
-
----
-
-## Installation
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Tech Stack
-
-* Python
-* Pandas
-* Plotly
-
----
-
 ## Why This Project
 
 This project focuses on:
@@ -140,7 +132,6 @@ It simulates how businesses:
 
 * API layer (Flask / FastAPI)
 * LLM-based dynamic insight generation
-* Dashboard / web interface
 * Real-time data integration
 
 ---

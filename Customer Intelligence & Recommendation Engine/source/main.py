@@ -1,6 +1,8 @@
 import pandas as pd
 import plotly.express as px
 import argparse #It lets the program take input from the command line
+import os
+os.makedirs("outputs", exist_ok=True)
 
 #========================= FEATURE ENGINEERING =========================
 # Spend Category
@@ -63,7 +65,7 @@ def get_recommended_action(row):
             return "Maintain Customer"
     elif row["segment"] == "Frequent Low Value":
         if row["priority"] =="Priority 1":
-            return "Surprising case. Investigate."
+            return "Unusual behavior detected. Investigate."
         else:
             return "Encourage bundle purchases or upsell"
     elif row["segment"] == "Loyal Customer":
@@ -78,12 +80,10 @@ def get_recommended_action(row):
 # ========================= INSIGHT =========================
 def generate_insight(row):
     return (
-        f"Customer has a score of {row['final_score']:.2f}, placing them in {row['priority']}, "
-        f"and is a {row['segment']} with {row['value_category']} value and {row['frequency_category']} frequency. "
-        f"Recommended action: {row['recommended_action']}.")
+        f"This customer is classified as {row['segment']} due to {row['frequency_category']} engagement and {row['value_category']} value.")
 
 
-def run_pipeline():
+def run_pipeline(vis=False):
 # ========================= LOAD DATA ========================= 
     df = pd.read_csv("data/shopping_trends.csv")
     df.columns = df.columns.str.strip()
@@ -135,54 +135,50 @@ def run_pipeline():
     df["segment"] = df.apply(assign_segment, axis=1)
     df["recommended_action"] = df.apply(get_recommended_action, axis=1)
     df["insight"] = df.apply(generate_insight, axis=1)
-    df_final = df[["Customer ID", "segment", "priority", "recommended_action","insight"]]
+    df_final = df[["Customer ID", "final_score", "segment", "priority", "recommended_action","insight"]]
     
-    # ========================= FINAL OUTPUT =========================
-    top_customers = df.sort_values(by="final_score", ascending=False).head(10)
-    print(top_customers[["Customer ID", "final_score", "priority"]])
-    print(df.groupby("segment")["final_score"].mean())
+    if vis:
+        # ========================= VISUALIZATION =========================
+        action_counts = df_final["recommended_action"].value_counts().reset_index()
+        action_counts.columns = ["action", "count"]
 
-    # ========================= VISUALIZATION =========================
-    action_counts = df_final["recommended_action"].value_counts().reset_index()
-    action_counts.columns = ["action", "count"]
+        fig1 = px.pie(action_counts, values="count", names="action")
+        fig1.show()
 
-    fig1 = px.pie(action_counts, values="count", names="action")
-    fig1.show()
-
-    priority_values= df_final["priority"].value_counts().reset_index()
-    priority_values.columns = ["priority", "count"]
-    fig2 = px.bar(priority_values, x="priority", y="count", title="Priority Distribution")
-    fig2.show()
+        priority_values= df_final["priority"].value_counts().reset_index()
+        priority_values.columns = ["priority", "count"]
+        fig2 = px.bar(priority_values, x="priority", y="count", title="Priority Distribution")
+        fig2.show()
     
-    df_final.to_csv("outputs/customer_insights.csv", index=False)
+    if os.path.exists("outputs"):
+        df_final.to_csv("outputs/customer_insights.csv", index=False)
     return df_final
 
 def show_customer_summary(df, customer_id):
     result = df[df["Customer ID"] == customer_id]
     
     if result.empty:
-        print("Customer not found")
-        return
+        return "Customer not found"
     
     row = result.iloc[0]
     
-    print("Customer ID:", row["Customer ID"])
-    print("Segment:", row["segment"])
-    print("Priority:", row["priority"])
-    print("Insight:", row["insight"])
+    return {"Customer ID": row["Customer ID"], "segment": row["segment"], "priority": row["priority"],
+    "action": row["recommended_action"], "insight": row["insight"], "final_score": row["final_score"]}
     
 if __name__ == "__main__":
-    df_final = run_pipeline()
+    df_final = run_pipeline(vis=True)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--customer_id", type=int) #User can pass a number called customer_id
+    parser.add_argument("--top", type=int)
     args = parser.parse_args() #reads input
 
     if args.customer_id:
         show_customer_summary(df_final, args.customer_id) #args.customer id holds the value; this line uses it
+    if args.top:
+        top_customers = df_final.sort_values(by="final_score", ascending=False).head(args.top)
+        print(top_customers[["Customer ID", "final_score", "priority"]])
+        if os.path.exists("outputs"):
+            top_customers.to_csv("output/top_customers.csv", index=False)
     else:
         print(df_final.head())
-
-
-
-
