@@ -31,6 +31,10 @@ Deployed using Streamlit Community Cloud.
 ---
 ## Screenshots / Output
 
+<img width="1462" height="751" alt="Customer Analysis" src="https://github.com/user-attachments/assets/dd8ab11e-af8b-4e08-b7d2-d06646d8d334" />
+<img width="2128" height="1175" alt="Bar Charts" src="https://github.com/user-attachments/assets/f099e737-88e9-465f-8dbf-86abce8fdaa6" />
+<img width="2495" height="802" alt="Filtered Table" src="https://github.com/user-attachments/assets/481103f6-9f0c-4e5a-adcb-8daa574c638f" />
+
 ### Example Output
 
 Customer ID: 663
