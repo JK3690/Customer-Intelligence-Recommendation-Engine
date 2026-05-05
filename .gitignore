@@ -3,9 +3,6 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Streamlit cache
-.streamlit/
-
 # Virtual envs
 venv/
 env/
