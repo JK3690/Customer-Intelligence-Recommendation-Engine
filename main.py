@@ -1,6 +1,8 @@
 import pandas as pd
 import plotly.express as px
 import argparse #It lets the program take input from the command line
+import os
+os.makedirs("outputs", exist_ok=True)
 
 #========================= FEATURE ENGINEERING =========================
 # Spend Category
@@ -135,11 +137,6 @@ def run_pipeline(vis=False):
     df["insight"] = df.apply(generate_insight, axis=1)
     df_final = df[["Customer ID", "final_score", "segment", "priority", "recommended_action","insight"]]
     
-    # ========================= FINAL OUTPUT =========================
-    top_customers = df.sort_values(by="final_score", ascending=False).head(10)
-    print(top_customers[["Customer ID", "final_score", "priority"]])
-    print(df.groupby("segment")["final_score"].mean())
-
     if vis:
         # ========================= VISUALIZATION =========================
         action_counts = df_final["recommended_action"].value_counts().reset_index()
@@ -153,15 +150,15 @@ def run_pipeline(vis=False):
         fig2 = px.bar(priority_values, x="priority", y="count", title="Priority Distribution")
         fig2.show()
     
-    df_final.to_csv("outputs/customer_insights.csv", index=False)
+    if os.path.exists("outputs"):
+        df_final.to_csv("outputs/customer_insights.csv", index=False)
     return df_final
 
 def show_customer_summary(df, customer_id):
     result = df[df["Customer ID"] == customer_id]
     
     if result.empty:
-        print("Customer not found")
-        return
+        return "Customer not found"
     
     row = result.iloc[0]
     
@@ -181,6 +178,7 @@ if __name__ == "__main__":
     if args.top:
         top_customers = df_final.sort_values(by="final_score", ascending=False).head(args.top)
         print(top_customers[["Customer ID", "final_score", "priority"]])
-        top_customers.to_csv("output/top_customers.csv", index=False)
+        if os.path.exists("outputs"):
+            top_customers.to_csv("output/top_customers.csv", index=False)
     else:
         print(df_final.head())

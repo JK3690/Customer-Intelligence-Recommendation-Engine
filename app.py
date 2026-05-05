@@ -1,5 +1,7 @@
 import streamlit as st
+import os
 from main import run_pipeline, show_customer_summary
+os.makedirs("outputs", exist_ok=True)
 
 st.markdown("""
 <style>
@@ -108,6 +110,8 @@ with tab3:
     st.subheader("Filtered Data")
     st.dataframe(filtered_df[["Customer ID", "segment", "priority", "final_score"]], width='stretch')
     st.divider()
+    
+    st.download_button("Download Filtered Data", filtered_df.to_csv(index=False), file_name="filtered_customers.csv")
     
     priority_counts = filtered_df["priority"].value_counts()
     st.subheader("Customer Priority Distribution")
