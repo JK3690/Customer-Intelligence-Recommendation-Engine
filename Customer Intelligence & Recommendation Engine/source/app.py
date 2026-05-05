@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-from main import run_pipeline, show_customer_summary
+from source.main import run_pipeline, show_customer_summary
 os.makedirs("outputs", exist_ok=True)
 
 st.markdown("""
