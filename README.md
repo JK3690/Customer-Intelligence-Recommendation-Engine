@@ -53,13 +53,13 @@ streamlit run source/app.py
 Run the pipeline:
 
 ```bash
-python main.py
+python source/main.py
 ```
 
 Query a specific customer:
 
 ```bash
-python main.py --customer_id 100
+python source/main.py --customer_id 100
 ```
 ---
 
